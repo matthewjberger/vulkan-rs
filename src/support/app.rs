@@ -39,7 +39,7 @@ pub trait App {
 pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
     create_logger()?;
 
-    let (event_loop, window) = create_window(title)?;
+    let (event_loop, _window) = create_window(title)?;
 
     event_loop.run(move |event, _, control_flow| {
         let mut result = || -> Result<()> {
