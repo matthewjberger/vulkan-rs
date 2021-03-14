@@ -1,4 +1,6 @@
+use crate::vulkan::RenderDevice;
 use anyhow::{Context, Result};
+use ash::version::DeviceV1_0;
 use simplelog::{CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, WriteLogger};
 use std::fs::File;
 use winit::{
@@ -19,6 +21,10 @@ pub trait App {
         Ok(())
     }
 
+    fn initialize(&mut self, _: &RenderDevice) -> Result<()> {
+        Ok(())
+    }
+
     fn handle_events(&mut self, _: Event<()>) -> Result<()> {
         Ok(())
     }
@@ -27,11 +33,11 @@ pub trait App {
         Ok(())
     }
 
-    fn render(&mut self) -> Result<()> {
+    fn render(&mut self, _: &Window, _: &mut RenderDevice) -> Result<()> {
         Ok(())
     }
 
-    fn cleanup(&mut self) -> Result<()> {
+    fn cleanup(&mut self, _: &RenderDevice) -> Result<()> {
         Ok(())
     }
 }
@@ -39,16 +45,22 @@ pub trait App {
 pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
     create_logger()?;
 
-    let (event_loop, _window) = create_window(title)?;
+    let (event_loop, window) = create_window(title)?;
+
+    let logical_size = window.inner_size();
+    let window_dimensions = [logical_size.width, logical_size.height];
+    let mut render_device = RenderDevice::new(&window, &window_dimensions)?;
+
+    app.initialize(&render_device)?;
 
     event_loop.run(move |event, _, control_flow| {
-        let mut result = || -> Result<()> {
+        let result = || -> Result<()> {
             *control_flow = ControlFlow::Poll;
 
             match event {
                 Event::MainEventsCleared => {
                     app.update()?;
-                    app.render()?;
+                    app.render(&window, &mut render_device)?;
                 }
                 Event::WindowEvent {
                     event:
@@ -75,10 +87,13 @@ pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
                     app.on_mouse(button, state)?;
                 }
                 Event::LoopDestroyed => {
-                    app.cleanup()?;
+                    app.cleanup(&render_device)?;
+                    unsafe { render_device.context.device.handle.device_wait_idle()? };
                 }
                 _ => {}
             }
+
+            app.handle_events(event)?;
 
             Ok(())
         };

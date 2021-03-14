@@ -637,13 +637,13 @@ impl PassBuilder {
             .iter()
             .map(|extent| extent.width)
             .min()
-            .unwrap_or(0);
+            .unwrap_or(1);
         let minimum_height = self
             .extents
             .iter()
             .map(|extent| extent.height)
             .min()
-            .unwrap_or(0);
+            .unwrap_or(1);
         vk::Extent2D::builder()
             .width(minimum_width)
             .height(minimum_height)
