@@ -1,4 +1,4 @@
-use crate::vulkan::RenderDevice;
+use crate::{vulkan::RenderDevice, Input, System};
 use anyhow::{Context, Result};
 use ash::version::DeviceV1_0;
 use simplelog::{CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, WriteLogger};
@@ -29,16 +29,37 @@ pub trait App {
         Ok(())
     }
 
-    fn update(&mut self) -> Result<()> {
+    fn update(&mut self, _: &ApplicationState) -> Result<()> {
         Ok(())
     }
 
-    fn render(&mut self, _: &Window, _: &mut RenderDevice) -> Result<()> {
+    fn render(&mut self, _: &ApplicationState, _: &mut RenderDevice) -> Result<()> {
         Ok(())
     }
 
     fn cleanup(&mut self, _: &RenderDevice) -> Result<()> {
         Ok(())
+    }
+}
+
+pub struct ApplicationState {
+    pub input: Input,
+    pub system: System,
+    pub window: Window,
+}
+
+impl ApplicationState {
+    pub fn new(window: Window, window_dimensions: [u32; 2]) -> Self {
+        Self {
+            input: Input::default(),
+            system: System::new(window_dimensions),
+            window,
+        }
+    }
+
+    pub fn handle_event(&mut self, event: &Event<()>) {
+        self.system.handle_event(&event);
+        self.input.handle_event(&event, self.system.window_center());
     }
 }
 
@@ -51,16 +72,20 @@ pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
     let window_dimensions = [logical_size.width, logical_size.height];
     let mut render_device = RenderDevice::new(&window, &window_dimensions)?;
 
+    let mut application_state = ApplicationState::new(window, window_dimensions);
+
     app.initialize(&render_device)?;
 
     event_loop.run(move |event, _, control_flow| {
         let result = || -> Result<()> {
             *control_flow = ControlFlow::Poll;
 
+            application_state.handle_event(&event);
+
             match event {
                 Event::MainEventsCleared => {
-                    app.update()?;
-                    app.render(&window, &mut render_device)?;
+                    app.update(&application_state)?;
+                    app.render(&application_state, &mut render_device)?;
                 }
                 Event::WindowEvent {
                     event:

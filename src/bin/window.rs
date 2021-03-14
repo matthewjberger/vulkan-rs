@@ -3,9 +3,8 @@ use ash::vk;
 use support::{
     run_app,
     vulkan::{Image, ImageNode, RawImage, RenderDevice, RenderGraph},
-    App,
+    App, ApplicationState,
 };
-use winit::window::Window;
 
 #[derive(Default)]
 struct DemoApp {
@@ -18,8 +17,8 @@ impl App for DemoApp {
         Ok(())
     }
 
-    fn render(&mut self, window: &Window, render_device: &mut RenderDevice) -> Result<()> {
-        let logical_size = window.inner_size();
+    fn render(&mut self, state: &ApplicationState, render_device: &mut RenderDevice) -> Result<()> {
+        let logical_size = state.window.inner_size();
         let window_dimensions = [logical_size.width, logical_size.height];
         let device = render_device.context.device.clone();
         render_device
