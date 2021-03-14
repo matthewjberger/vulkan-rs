@@ -3,9 +3,7 @@ use simplelog::{CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, W
 use std::fs::File;
 use winit::{
     dpi::PhysicalSize,
-    event::KeyboardInput,
-    event::WindowEvent,
-    event::{ElementState, Event, MouseButton, VirtualKeyCode},
+    event::{ElementState, Event, KeyboardInput, MouseButton, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::{Window, WindowBuilder},
 };
