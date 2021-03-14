@@ -83,6 +83,18 @@ pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
             application_state.handle_event(&event);
 
             match event {
+                Event::NewEvents(_cause) => {
+                    if application_state
+                        .input
+                        .is_key_pressed(VirtualKeyCode::Escape)
+                    {
+                        application_state.system.exit_requested = true;
+                    }
+
+                    if application_state.system.exit_requested {
+                        *control_flow = ControlFlow::Exit;
+                    }
+                }
                 Event::MainEventsCleared => {
                     app.update(&application_state)?;
                     app.render(&application_state, &mut render_device)?;
@@ -100,9 +112,6 @@ pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
                         },
                     ..
                 } => {
-                    if (keycode, state) == (VirtualKeyCode::Escape, ElementState::Pressed) {
-                        *control_flow = ControlFlow::Exit;
-                    }
                     app.on_key(state, keycode)?;
                 }
                 Event::WindowEvent {

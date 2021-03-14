@@ -11,11 +11,11 @@ pub struct Instance {
 }
 
 impl Instance {
-    const APPLICATION_NAME: &'static str = "Dragonglass";
+    const APPLICATION_NAME: &'static str = "Vulkan Rust";
     const APPLICATION_VERSION: u32 = make_version(1, 0, 0);
     const API_VERSION: u32 = make_version(1, 2, 0);
     const ENGINE_VERSION: u32 = make_version(1, 0, 0);
-    const ENGINE_NAME: &'static str = "Dragonglass Engine";
+    const ENGINE_NAME: &'static str = "Vulkan Rust";
 
     pub fn new(entry: &ash::Entry, extensions: &[*const i8], layers: &[*const i8]) -> Result<Self> {
         let application_create_info = Self::application_create_info()?;

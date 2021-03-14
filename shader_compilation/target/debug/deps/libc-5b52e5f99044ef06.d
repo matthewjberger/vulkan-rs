@@ -1,0 +1,9 @@
+c:\Users\odin\code\vulkan-rs\shader_compilation\target\debug\deps\libc-5b52e5f99044ef06.rmeta: C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\lib.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\macros.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\fixed_width_ints.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\windows\mod.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\windows\msvc.rs
+
+c:\Users\odin\code\vulkan-rs\shader_compilation\target\debug\deps\libc-5b52e5f99044ef06.d: C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\lib.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\macros.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\fixed_width_ints.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\windows\mod.rs C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\windows\msvc.rs
+
+C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\lib.rs:
+C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\macros.rs:
+C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\fixed_width_ints.rs:
+C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\windows\mod.rs:
+C:\Users\odin\scoop\persist\rustup\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.88\src\windows\msvc.rs:

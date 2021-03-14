@@ -18,6 +18,11 @@ simplelog = { version = "0.9.0", features = ["termcolor"] }
 vk-mem = { git = "https://github.com/gwihlidal/vk-mem-rs" }
 winit = "0.24.0"
 
+[build-dependencies]
+log = "0.4.11"
+shader_compilation = { path = "shader_compilation" }
+simplelog = { version = "0.9.0", features = ["termcolor"] }
+
 [lib]
 name = "support"
 path = "src/support/lib.rs"
