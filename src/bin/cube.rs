@@ -2,12 +2,14 @@ use anyhow::Result;
 use ash::vk;
 use nalgebra_glm as glm;
 use support::{
+    camera::{update_free_camera, CameraDirection, FreeCamera},
     run_app,
     vulkan::{
         Cube, CubeRender, Image, ImageNode, RawImage, RenderDevice, RenderGraph, ShaderCache,
     },
     App, ApplicationState,
 };
+use winit::event::VirtualKeyCode;
 
 #[derive(Default)]
 struct DemoApp {
@@ -15,10 +17,14 @@ struct DemoApp {
     shader_cache: ShaderCache,
     cube: Option<CubeRender>,
     angle: f32,
+    camera: FreeCamera,
 }
 
 impl App for DemoApp {
-    fn initialize(&mut self, render_device: &RenderDevice) -> Result<()> {
+    fn initialize(&mut self, state: &ApplicationState, render_device: &RenderDevice) -> Result<()> {
+        state.capture_mouse(true)?;
+        state.set_cursor_visible(false);
+
         self.rendergraph = create_rendergraph(&render_device)?;
 
         let cube = Cube::new(
@@ -39,6 +45,7 @@ impl App for DemoApp {
 
     fn update(&mut self, state: &ApplicationState) -> Result<()> {
         self.angle += 10.0 * state.system.delta_time as f32;
+        update_free_camera(&mut self.camera, state)?;
         Ok(())
     }
 
@@ -49,17 +56,12 @@ impl App for DemoApp {
             0.01,
             1000.0,
         );
-        let view = glm::look_at(
-            &glm::vec3(0.0, 0.0, -4.0),
-            &glm::vec3(0.0, 0.0, 0.0),
-            &glm::Vec3::y(),
-        );
         let model = glm::rotate(
             &glm::Mat4::identity(),
             self.angle.to_radians(),
             &glm::Vec3::y(),
         );
-        let mvp = perspective * view * model;
+        let mvp = perspective * self.camera.view_matrix() * model;
 
         let logical_size = state.window.inner_size();
         let window_dimensions = [logical_size.width, logical_size.height];
@@ -112,7 +114,7 @@ pub fn create_rendergraph(render_device: &RenderDevice) -> Result<RenderGraph> {
     let color = "color";
     let backbuffer = &RenderGraph::backbuffer_name(0);
     let mut rendergraph = RenderGraph::new(
-        &[color, backbuffer],
+        &[color],
         vec![ImageNode {
             name: backbuffer.to_string(),
             extent: swapchain_properties.extent,

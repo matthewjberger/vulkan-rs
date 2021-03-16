@@ -4,6 +4,7 @@ use ash::version::DeviceV1_0;
 use simplelog::{CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, WriteLogger};
 use std::fs::File;
 use winit::{
+    dpi::PhysicalPosition,
     dpi::PhysicalSize,
     event::{ElementState, Event, KeyboardInput, MouseButton, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -21,7 +22,7 @@ pub trait App {
         Ok(())
     }
 
-    fn initialize(&mut self, _: &RenderDevice) -> Result<()> {
+    fn initialize(&mut self, _: &ApplicationState, _: &RenderDevice) -> Result<()> {
         Ok(())
     }
 
@@ -61,6 +62,22 @@ impl ApplicationState {
         self.system.handle_event(&event);
         self.input.handle_event(&event, self.system.window_center());
     }
+
+    pub fn capture_mouse(&self, capture: bool) -> Result<()> {
+        self.window.set_cursor_grab(capture)?;
+        Ok(())
+    }
+
+    pub fn set_cursor_visible(&self, visibility: bool) {
+        self.window.set_cursor_visible(visibility);
+    }
+
+    pub fn center_mouse(&self) -> Result<()> {
+        let center = self.system.window_center();
+        self.window
+            .set_cursor_position(PhysicalPosition::new(center.x, center.y))?;
+        Ok(())
+    }
 }
 
 pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
@@ -74,7 +91,7 @@ pub fn run_app(mut app: impl App + 'static, title: &str) -> Result<()> {
 
     let mut application_state = ApplicationState::new(window, window_dimensions);
 
-    app.initialize(&render_device)?;
+    app.initialize(&application_state, &render_device)?;
 
     event_loop.run(move |event, _, control_flow| {
         let result = || -> Result<()> {
