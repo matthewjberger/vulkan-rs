@@ -35,7 +35,7 @@ impl App for DemoApp {
 
         cube_render.create_pipeline(
             &mut self.shader_cache,
-            self.rendergraph.pass("color")?.render_pass.clone(),
+            self.rendergraph.pass("offscreen")?.render_pass.clone(),
             vk::SampleCountFlags::TYPE_1,
         )?;
         self.cube = Some(cube_render);
@@ -71,7 +71,7 @@ impl App for DemoApp {
             .render(&window_dimensions, |command_buffer, image_index| {
                 self.rendergraph.execute_pass(
                     command_buffer,
-                    "color",
+                    "offscreen",
                     image_index,
                     |pass, command_buffer| {
                         device.update_viewport(command_buffer, pass.extent, false)?;
@@ -95,7 +95,7 @@ impl App for DemoApp {
             if let Some(cube) = self.cube.as_mut() {
                 cube.create_pipeline(
                     &mut self.shader_cache,
-                    self.rendergraph.pass("color")?.render_pass.clone(),
+                    self.rendergraph.pass("offscreen")?.render_pass.clone(),
                     vk::SampleCountFlags::TYPE_1,
                 )?;
             }
@@ -111,10 +111,10 @@ pub fn create_rendergraph(render_device: &RenderDevice) -> Result<RenderGraph> {
     let device = render_device.context.device.clone();
     let allocator = render_device.context.allocator.clone();
 
-    let color = "color";
+    let offscreen = "offscreen";
     let backbuffer = &RenderGraph::backbuffer_name(0);
     let mut rendergraph = RenderGraph::new(
-        &[color],
+        &[offscreen],
         vec![ImageNode {
             name: backbuffer.to_string(),
             extent: swapchain_properties.extent,
@@ -128,7 +128,7 @@ pub fn create_rendergraph(render_device: &RenderDevice) -> Result<RenderGraph> {
             force_store: false,
             force_shader_read: false,
         }],
-        &[(color, backbuffer)],
+        &[(offscreen, &RenderGraph::backbuffer_name(0))],
     )?;
 
     rendergraph.build(device.clone(), allocator)?;
